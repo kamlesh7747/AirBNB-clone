@@ -1,0 +1,53 @@
+<% layout("layouts/boilerplate") %>
+
+    <body>
+        <div class="container mt-5 col-6">
+            <h2 class="mb-4">Edit your Listing</h2>
+            <form action="/listings/<%=listing._id %>?_method=PUT" method="POST">
+                <!-- Title -->
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title</label>
+                    <input type="text" class="form-control" id="title" name="title" value="<%= listing.title %>"
+                        required>
+                </div>
+
+                <!-- Description -->
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea class="form-control" id="description" name="description" rows="3"
+                        required><%= listing.description %></textarea>
+                </div>
+
+                <!-- Image URL -->
+                <div class="mb-3">
+                    <label for="imageUrl" class="form-label">Image URL</label>
+                    <input type="url" class="form-control" id="imageUrl" name="imageUrl"
+                        value="<%= listing.image.url %>" required>
+                </div>
+
+                <!-- Price -->
+                <div class="mb-3">
+                    <label for="price" class="form-label">Price</label>
+                    <input type="number" class="form-control" id="price" name="price" value="<%= listing.price %>"
+                        required>
+                </div>
+
+                <!-- Location -->
+                <div class="mb-3">
+                    <label for="location" class="form-label">Location</label>
+                    <input type="text" class="form-control" id="location" name="location"
+                        value="<%= listing.location %>" required>
+                </div>
+
+                <!-- Country -->
+                <div class="mb-3">
+                    <label for="country" class="form-label">Country</label>
+                    <input type="text" class="form-control" id="country" name="country" value="<%= listing.country %>"
+                        required>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-primary">Update</button>
+            </form>
+        </div>
+    </body>

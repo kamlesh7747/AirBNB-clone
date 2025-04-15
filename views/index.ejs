@@ -1,0 +1,27 @@
+<% layout("layouts/boilerplate") %> <!-- note: NO "/" at starting of path-->
+
+    <body>
+        <main> <!-- Bootstrap Navbar -->
+            <div class="container mt-4">
+                <div class="row">
+                    <% data.forEach(listing=> { %>
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-70">
+                                <img src="<%= listing.image.url %>" class="card-img-top" alt="<%= listing.title %>">
+                                <div class="card-body d-flex flex-column">
+                                    <h5>
+                                        <%= listing.title %>
+                                    </h5>
+                                    <p>
+                                        <%= listing.description %>
+                                    </p>
+                                    <a href="/listings/<%= listing._id %>" class="stretched-link"></a>
+                                    <!-- Invisible link overlay -->
+                                </div>
+                            </div>
+                        </div>
+                        <% }) %>
+                </div>
+            </div>
+        </main>
+    </body>
