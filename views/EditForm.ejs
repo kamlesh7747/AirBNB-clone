@@ -3,7 +3,8 @@
     <body>
         <div class="container mt-5 col-6">
             <h2 class="mb-4">Edit your Listing</h2>
-            <form action="/listings/<%=listing._id %>?_method=PUT" method="POST">
+            <form action="/listings/<%= listing._id %>?_method=PUT" method="POST" novalidate class="needs-validation"
+                enctype="multipart/form-data">
                 <!-- Title -->
                 <div class="mb-3">
                     <label for="title" class="form-label">Title</label>
@@ -20,23 +21,25 @@
 
                 <!-- Image URL -->
                 <div class="mb-3">
-                    <label for="imageUrl" class="form-label">Image URL</label>
-                    <input type="url" class="form-control" id="imageUrl" name="imageUrl"
-                        value="<%= listing.image.url %>" required>
+                    <input type="file" class="form-control" id="image" name="image">
                 </div>
 
-                <!-- Price -->
-                <div class="mb-3">
-                    <label for="price" class="form-label">Price</label>
-                    <input type="number" class="form-control" id="price" name="price" value="<%= listing.price %>"
-                        required>
-                </div>
 
-                <!-- Location -->
-                <div class="mb-3">
-                    <label for="location" class="form-label">Location</label>
-                    <input type="text" class="form-control" id="location" name="location"
-                        value="<%= listing.location %>" required>
+
+                <div class="row">
+                    <!-- Price -->
+                    <div class="mb-3 col-4">
+                        <label for="price" class="form-label">Price</label>
+                        <input type="number" class="form-control" id="price" name="price" value="<%= listing.price %>"
+                            required>
+                    </div>
+
+                    <!-- Location -->
+                    <div class="mb-3 col-8">
+                        <label for="location" class="form-label">Location</label>
+                        <input type="text" class="form-control" id="location" name="location"
+                            value="<%= listing.location %>" required>
+                    </div>
                 </div>
 
                 <!-- Country -->
@@ -47,7 +50,7 @@
                 </div>
 
                 <!-- Submit Button -->
-                <button type="submit" class="btn btn-primary">Update</button>
+                <button type="submit" class="btn btn-dark">Update</button>
             </form>
         </div>
     </body>

@@ -5,10 +5,16 @@ const mongoose = require("mongoose");
 const Listing = require("./models/listing");
 const ejsMate = require("ejs-mate");
 const methodOverride = require('method-override');
-const multer = require("multer");
-
-const { storage } = require("./cloudinaryConfig")
-const upload = multer({ storage: storage });
+const session = require("express-session");
+const passport = require("passport");
+const LocalStrategy = require("passport-local");
+const User = require("./models/user");
+const flash = require("connect-flash");
+const listings = require("./routes/listings");
+const reviews = require("./routes/reviews");
+const user = require("./routes/user");
+const ExpressError = require('./utils/ExpressError');
+const asyncWrap = require('./utils/asyncWrap');
 
 const MONGO_URL = "mongodb://localhost:27017/wanderLust";
 main()
@@ -34,96 +40,59 @@ app.engine("ejs", ejsMate);
 
 app.use(methodOverride('_method'));
 
-app.get('/', async (req, res) => {
+// --- Session Setup ---
+app.use(session({
+    secret: 'thisisasecretkey', // should be in .env for real projects
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        expires: Date.now() + 1000 * 60 * 60 * 24 * 3, //  ms*s*min*h*d  //it specifies exact date and time.
+        maxAge: 1000 * 60 * 60 * 24 * 3, //  it specifies duration
+        httpOnly: true
+    }
+}));
+
+// --- Passport Setup ---
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));  // to use static method
+// add and remove user data from session
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+// place before route mw
+app.use(flash());
+app.use((req, res, next) => {
+    res.locals.success = req.flash("success");  // this need to be before route so that success can be stored before use
+    res.locals.error = req.flash("error");
+    res.locals.currUser = req.user;  // to show login+signup or logOut
+    next();
+});
+
+app.get('/', asyncWrap(async (req, res) => {
     const data = await Listing.find({});
     res.render('index', { data });
-});
-app.get("/listings/new", (req, res) => {
-    res.render("NewListingForm");
-})
-app.post("/listings/new", upload.single("image"), async (req, res) => {
-    const jsonData = req.body;
-    const imageData = req.file;
+}));
 
-    const newListing = new Listing({
-        title: jsonData.title,
-        description: jsonData.description,
-        image: {
-            filename: imageData.filename,
-            url: imageData.path
-        },
-        price: jsonData.price,
-        location: jsonData.location,
-        country: jsonData.country
-    });
+app.use("/listings", listings);
+app.use("/listings/:id/reviews", reviews);
+app.use("/user", user);
 
-    await newListing.save();
-    console.log(newListing);
 
-    res.redirect("/");
+// if no path is matched
+app.all(/(.*)/, (req, res, next) => {
+    // res.status(404).send("page not found.");
+    next(new ExpressError(404, "page not found"));
 });
 
-
-app.get("/listings/:id", async (req, res) => {
-    try {
-        const { id } = req.params; // Get ID from URL
-        const listing = await Listing.findById(id); // Fetch listing from MongoDB
-        if (!listing) {
-            return res.status(404).send("Listing not found");
-        }
-        res.render("Show", { listing }); // pass data and Render 
-    } catch (error) {
-        console.error(error);
-        res.status(500).send("Internal Server Error");
-    }
+// error handling middleware
+app.use((err, req, res, next) => {
+    let { code = 500, message = "something went wrong" } = err;
+    // res.status(code).send(message);
+    console.log("code :", code)
+    res.status(code).render("Error.ejs", { err });
 });
-
-app.get("/listings/:id/edit", async (req, res) => {
-    try {
-        const { id } = req.params;
-        const listing = await Listing.findById(id);
-        if (!listing) {
-            return res.status(404).send("Listing not found");
-        }
-        res.render("EditForm", { listing });
-    } catch (error) {
-        console.error(error);
-        res.status(500).send("Internal Server Error");
-    }
-});
-
-app.put('/listings/:id', async (req, res) => {
-    try {
-        const { id } = req.params;
-        const editedData = req.body;
-
-        // Update listing with new data
-        const updatedListing = await Listing.findByIdAndUpdate(id, {
-            title: editedData.title,
-            description: editedData.description,
-            price: editedData.price,
-            location: editedData.location,
-            country: editedData.country,
-            image: {
-                filename: editedData.filename,
-                url: editedData.imageUrl
-            }
-        }); // { new: true } returns the updated document
-
-        console.log(updatedListing);
-        res.redirect("/");
-    } catch (error) {
-        console.error(error);
-        res.status(500).send("Error updating listing");
-    }
-});
-
-app.delete("/listings/:id", async (req, res) => {
-    const { id } = req.params;
-    const deletedListing = await Listing.findByIdAndDelete(id);
-    console.log(deletedListing);
-    res.redirect("/");
-})
 
 const PORT = 3000;
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+

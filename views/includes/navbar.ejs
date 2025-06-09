@@ -7,32 +7,38 @@
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <!-- Left-aligned menu -->
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <ul class="navbar-nav  mb-2 mb-lg-0 ">
                 <li class="nav-item">
                     <a class="nav-link" href="/"><i class="fa-solid fa-compass me-2"></i></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="/">Home</a>
+                    <a class="nav-link active" href="/">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/">AllListings</a>
+                    <a class="nav-link active" href="/">AllListings</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/listings/new">AddNewListing</a>
+                    <a class="nav-link active" href="/listings/new">AddNewListing</a>
                 </li>
             </ul>
 
             <!-- Right-aligned buttons -->
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <button type="button" class="btn btn-success me-2">Sign Up</button>
-                </li>
-                <li class="nav-item">
-                    <button type="button" class="btn btn-success me-2">Log In</button>
-                </li>
-                <li class="nav-item">
-                    <button type="button" class="btn btn-danger">Log Out</button>
-                </li>
+                <% if(!currUser){ %>
+
+                    <li class="nav-item">
+                        <a class="btn btn-success me-2" href="/user/signUp">Sign Up</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-success me-2" href="/user/logIn">Log In</a>
+                    </li>
+                    <% } %>
+
+                        <% if(currUser){ %>
+                            <li class="nav-item">
+                                <a class="btn btn-danger me-2" href="/user/logOut">Log Out</a>
+                            </li>
+                            <% } %>
             </ul>
         </div>
     </div>

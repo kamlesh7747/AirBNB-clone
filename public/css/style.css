@@ -7,7 +7,9 @@ body {
   display: flex;
   flex-direction: column;
 }
-
+.card p {
+  line-height: normal;
+}
 .card {
   cursor: pointer;
 }

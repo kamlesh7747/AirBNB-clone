@@ -1,0 +1,19 @@
+<% layout("layouts/boilerplate") %>
+
+
+
+    <div class="row offset-3 col-6">
+        <form action="/user/signUp" method="post">
+            <h3>Sign Up on AirBNB</h3>
+            <label for="email" class="from-label">email</label>
+            <input type="email" name="email" class="col-6 form-control">
+
+            <label for="username">username</label>
+            <input type="text" name="username" class="col-6 form-control">
+
+            <label for="password">password</label>
+            <input type="password" name="password" class="col-6 form-control">
+
+            <button type="submit" class="btn btn-success mt-2">Sign Up</button>
+        </form>
+    </div>

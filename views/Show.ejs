@@ -1,33 +1,89 @@
 <% layout("layouts/boilerplate") %>
 
     <body>
-        <div class="container mt-5">
-            <div class="row justify-content-center w-100"> <!-- Added w-100 for full row width -->
-                <div class="col-md-6"> <!-- Removed offset-md-3 -->
-                    <div class="card">
-                        <img src="<%= listing.image.url %>" class="card-img-top"
-                            style="max-height: 35vh; object-fit: cover;" alt="Listing Image">
-                        <div class="card-body "> <!-- Added text-center -->
-                            <h2 class="card-title">
-                                <%= listing.title %>
-                            </h2>
-                            <p class="card-text"><strong>Description:</strong>
-                                <%= listing.description %>
-                            </p>
-                            <p class="card-text"><strong>Address:</strong>
-                                <%= listing.location %>, <%= listing.country %>
-                            </p>
-                            <p class="card-text"><strong>Price:</strong> $<%= listing.price %>
-                            </p>
+        <div class="col-6 offset-3">
+            <h4 class="card-title ">
+                <%= listing.title %>
+            </h4>
 
-                            <!-- Buttons -->
-                            <a href="/listings/<%= listing._id %>/edit" class="btn btn-danger me-3">Edit</a>
-                            <form action="/listings/<%= listing._id %>?_method=DELETE" method="POST" class="d-inline">
-                                <button type="submit" class="btn btn-dark">Delete</button>
-                            </form>
-                        </div>
+            <img src="<%= listing.image.url %>" class="card-img-top rounded-2"
+                style="max-height: 35vh; object-fit: cover;" alt="Listing Image">
+            <p><i>owned by </i>
+                <%=listing.owner.username%>
+            </p>
+            <div class="card-body p-0 border-0">
+
+                <p class="card-text">
+                    <%= listing.description %>
+                </p>
+                <p class="card-text"><strong>Address:</strong>
+                    <%= listing.location %>, <%= listing.country %>
+                </p>
+                <p class="card-text"><strong>Price:</strong> $<%= listing.price %>
+                </p>
+
+                <!-- Buttons -->
+                <% if(currUser && listing.owner.equals(currUser._id)){ %>
+                    <div class="btns"> <a href="/listings/<%= listing._id %>/edit" class="btn btn-danger me-3">Edit</a>
+                        <form action="/listings/<%= listing._id %>?_method=DELETE" method="POST" class="d-inline">
+                            <button type="submit" class="btn btn-dark">Delete</button>
+                        </form>
                     </div>
-                </div>
+                    <% } %>
             </div>
         </div>
+
+
+        <!-- Review form -->
+        <% if(currUser){ %>
+            <div class="col-8 offset-3 my-5">
+                <hr>
+                <h5 class="mb-4">Leave a Review</h5>
+                <form action="/listings/<%= listing._id %>/reviews/new" method="POST">
+                    <div class="mb-3">
+                        <label for="review[rating]" class="form-label">Rating</label>
+                        <input type="range" name="review[rating]" id="review[rating]" class="form-range" min="1"
+                            max="5">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="review[comment]" class="form-label">Comment</label>
+                        <textarea name="review[comment]" id="review[comment]" placeholder="write your experiance here"
+                            class="form-control"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-outline-dark">Submit</button>
+                </form>
+            </div>
+            <% } %>
+                <!-- review display -->
+                <% if(listing.reviews.length){ %>
+                    <hr class="col-6 offset-3">
+                    <h6 class="col-6 offset-3">All reviews</h6>
+                    <div class="row offset-3">
+                        <% listing.reviews.forEach(review=> { %>
+
+                            <div class="col-5 me-3 card mb-3">
+                                <p><strong>
+                                        @<%= review.author.username %>
+                                    </strong>
+
+                                </p>
+                                <p>Rating:
+                                    <%= review.rating %>
+                                </p>
+                                <p>Comment:
+                                    <%= review.comment %>
+                                </p>
+                                <form method="POST"
+                                    action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE">
+                                    <button class="btn btn-dark btn-sm col-4 mb-2">Delete</button>
+                                </form>
+
+                                <!-- onclick="handleDeleteReview(<%=review.id%>)" -->
+
+                            </div>
+                            <% }); %>
+                    </div>
+                    <% } %>
     </body>

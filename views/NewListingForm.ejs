@@ -3,17 +3,21 @@
     <body>
         <div class="container mt-5 col-6">
             <h2 class="mb-4">Create a New Listing</h2>
-            <form action="/listings/new" method="POST" enctype="multipart/form-data">
+            <form action="/listings/new" method="POST" enctype="multipart/form-data" novalidate
+                class="needs-validation">
+
                 <!-- Title -->
                 <div class="mb-3">
                     <label for="title" class="form-label">Title</label>
                     <input type="text" class="form-control" id="title" name="title" required>
+                    <div class="invalid-feedback">title must be string</div>
                 </div>
 
                 <!-- Description -->
                 <div class="mb-3">
                     <label for="description" class="form-label">Description</label>
                     <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                    <div class="invalid-feedback">please enter a valid country name</div>
                 </div>
 
                 <!-- Image URL -->
@@ -22,26 +26,32 @@
                     <input type="file" class="form-control" id="image" name="image" required>
                 </div>
 
-                <!-- Price -->
-                <div class="mb-3">
-                    <label for="price" class="form-label">Price</label>
-                    <input type="number" class="form-control" id="price" name="price" required>
+                <div class="mb-3 row">
+                    <!-- Price -->
+                    <div class="col-md-4">
+                        <label for="price" class="form-label">Price</label>
+                        <input type="number" class="form-control" id="price" name="price" required>
+                        <div class="invalid-feedback">Price must be a valid positive number</div>
+                    </div>
+
+                    <!-- Country -->
+                    <div class="col-md-8">
+                        <label for="country" class="form-label">Country</label>
+                        <input type="text" class="form-control" id="country" name="country" required>
+                        <div class="invalid-feedback">please enter a valid country name</div>
+                    </div>
                 </div>
 
                 <!-- Location -->
                 <div class="mb-3">
                     <label for="location" class="form-label">Location</label>
                     <input type="text" class="form-control" id="location" name="location" required>
-                </div>
+                    <div class="invalid-feedback">please enter a correct location</div>
 
-                <!-- Country -->
-                <div class="mb-3">
-                    <label for="country" class="form-label">Country</label>
-                    <input type="text" class="form-control" id="country" name="country" required>
                 </div>
 
                 <!-- Submit Button -->
-                <button type="submit" class="btn btn-primary">Add Listing</button>
+                <button type="submit" class="btn btn-success">Add Listing</button>
             </form>
         </div>
     </body>
